@@ -117,7 +117,7 @@
     // --- CONFIGURATION ---
     const CORRECT_PASSWORD = "1234"; 
     
-    // Replace this with the URL of the site you are hosting on GitHub Pages (or any site that allows iframes)
+    // PUT YOUR GOOGLE SITES LINK HERE
     const TARGET_URL = "https://sites.google.com/ccics.org/sam/home/"; 
     // ---------------------
 
@@ -147,31 +147,10 @@
         return;
       }
 
-      // 2. Cloak the new tab to look like Google Docs
-      win.document.title = "Google Docs";
-      let favicon = win.document.createElement("link");
-      favicon.rel = "icon";
-      favicon.href = "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico";
-      win.document.head.appendChild(favicon);
+      // 2. Directly redirect the new window to your Google Site (Bypasses iframe blocks)
+      win.location.replace(TARGET_URL);
 
-      // 3. Remove all margins and scrollbars from the blank page
-      win.document.body.style.margin = "0";
-      win.document.body.style.padding = "0";
-      win.document.body.style.overflow = "hidden";
-      win.document.body.style.height = "100vh";
-      win.document.body.style.width = "100vw";
-
-      // 4. Create and inject the fullscreen iframe
-      let iframe = win.document.createElement('iframe');
-      iframe.style.border = "none";
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
-      iframe.style.margin = "0";
-      iframe.src = TARGET_URL;
-      
-      win.document.body.appendChild(iframe);
-
-      // 5. Optional: Redirect the original gateway tab away so it hides
+      // 3. Redirect the original gateway tab away so it hides
       window.location.replace("https://classroom.google.com");
     }
   </script>
