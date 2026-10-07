@@ -1,52 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Google Docs</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Login</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --primary: #3b82f6;
-      --primary-hoverHosting your gateway on GitHub Pages allows `about:blank` cloaking and password protection to work cleanly without iframe restriction errors.
+    /* Animated Gradient Background */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6, #0f172a);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      color: #fff;
+    }
 
-<Steps>
-  <Step title="Create a New GitHub Repository">
-    1. Go to [GitHub](https://github.com) and log in to your account.
-    2. Click the **+** icon in the top-right corner and select **New repository**.
-    3. Enter a repository name (e.g., `portal` or `gateway`).
-    4. Ensure the visibility is set to **Public** (GitHub Pages requires public repositories for free accounts).
-    5. Click **Create repository**.
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-    *Verification:* You will see your new repository page with options to push or upload files.
-  </Step>
+    /* Glassmorphic Container */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 40px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.4s ease;
+    }
 
-  <Step title="Upload Your index.html File">
-    1. Click **uploading an existing file** on the repository main page (or **Add file** > **Upload files**).
-    2. Drag and drop your local HTML file, or click **choose your files** to select it.
-    3. Make sure the file is named **`index.html`** in all lowercase so GitHub automatically treats it as the homepage.
-    4. Click the green **Commit changes** button at the bottom.
+    h2 {
+      margin-top: 0;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
 
-    *Verification:* You will see `index.html` listed in the main file list of your repository.
-  </Step>
+    input[type="password"] {
+      width: 90%;
+      padding: 12px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      font-size: 16px;
+      outline: none;
+      text-align: center;
+    }
 
-  <Step title="Enable GitHub Pages">
-    1. Click the **Settings** tab located in the top navigation bar of your repository.
-    2. On the left sidebar, click **Pages** under the "Code and automation" section.
-    3. Under **Build and deployment**, set the **Branch** dropdown from `None` to **`main`** (or `master`).
-    4. Leave the folder dropdown set to `/ (root)` and click **Save**.
+    input[type="password"]::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
 
-    *Verification:* Refresh the page after 1 to 2 minutes. A banner will appear at the top of the Pages section stating: *"Your site is live at https://<username>.github.io/<repository-name>/"*.
-  </Step>
+    button {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 12px 24px;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.1s;
+      width: 100%;
+    }
 
-  <Step title="Test Your Site">
-    1. Click the provided GitHub Pages link to open your live site in a new tab.
-    2. Type your passcode to unlock the portal.
-    3. Click the **Launch** button to trigger your `about:blank` window.
+    button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
 
-    *Verification:* The page will launch into an `about:blank` tab and display your target site inside a full-viewport iframe without any connection errors.
-  </Step>
-</Steps>
+    button:active {
+      transform: scale(0.98);
+    }
 
-<FollowUp label="Need the complete HTML code ready to upload as index.html?" query="Give me the complete HTML code with password protection and about:blank iframe cloaking ready for GitHub Pages." />
+    .error {
+      color: #ff6b6b;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Hide the launch screen initially */
+    #launch-screen {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Password Screen -->
+  <div class="glass-panel" id="login-screen">
+    <h2>Secure Gateway</h2>
+    <input type="password" id="passcode" placeholder="Enter Passcode" onkeypress="handleEnter(event)">
+    <button onclick="checkPassword()">Unlock</button>
+    <div class="error" id="error-msg">Incorrect Passcode</div>
+  </div>
+
+  <!-- Launch Screen -->
+  <div class="glass-panel" id="launch-screen">
+    <h2>Access Granted</h2>
+    <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 20px;">Your environment is ready.</p>
+    <button onclick="launchSite()">Launch Environment</button>
+  </div>
+
+  <script>
+    // --- CONFIGURATION ---
+    const CORRECT_PASSWORD = "1234"; 
+    
+    // Replace this with the URL of the site you are hosting on GitHub Pages (or any site that allows iframes)
+    const TARGET_URL = "https://sites.google.com/ccics.org/sam/home/"; 
+    // ---------------------
+
+    function handleEnter(event) {
+      if (event.key === "Enter") {
+        checkPassword();
+      }
+    }
+
+    function checkPassword() {
+      const input = document.getElementById("passcode").value;
+      if (input === CORRECT_PASSWORD) {
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("launch-screen").style.display = "block";
+      } else {
+        document.getElementById("error-msg").style.display = "block";
+        document.getElementById("passcode").value = "";
+      }
+    }
+
+    function launchSite() {
+      // 1. Open the about:blank window
+      let win = window.open('about:blank', '_blank');
+      
+      if (!win) {
+        alert("Popup blocked! Please allow popups for this page to launch the site.");
+        return;
+      }
+
+      // 2. Cloak the new tab to look like Google Docs
+      win.document.title = "Google Docs";
+      let favicon = win.document.createElement("link");
+      favicon.rel = "icon";
+      favicon.href = "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico";
+      win.document.head.appendChild(favicon);
+
+      // 3. Remove all margins and scrollbars from the blank page
+      win.document.body.style.margin = "0";
+      win.document.body.style.padding = "0";
+      win.document.body.style.overflow = "hidden";
+      win.document.body.style.height = "100vh";
+      win.document.body.style.width = "100vw";
+
+      // 4. Create and inject the fullscreen iframe
+      let iframe = win.document.createElement('iframe');
+      iframe.style.border = "none";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.margin = "0";
+      iframe.src = TARGET_URL;
+      
+      win.document.body.appendChild(iframe);
+
+      // 5. Optional: Redirect the original gateway tab away so it hides
+      window.location.replace("https://classroom.google.com");
+    }
+  </script>
+</body>
+</html>
