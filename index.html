@@ -117,8 +117,9 @@
     // --- CONFIGURATION ---
     const CORRECT_PASSWORD = "1234"; 
     
-    // PUT YOUR GOOGLE SITES LINK HERE
-    const TARGET_URL = "https://sites.google.com/ccics.org/sam/home/"; 
+    // You MUST put your web proxy address in front of your Google Sites link here.
+    // Example format using an Ultraviolet/Rammerhead type proxy:
+    const TARGET_URL = "https://your-proxy-domain.com/service/https://sites.google.com/view/YOUR-SITE-HERE"; 
     // ---------------------
 
     function handleEnter(event) {
@@ -147,10 +148,31 @@
         return;
       }
 
-      // 2. Directly redirect the new window to your Google Site (Bypasses iframe blocks)
-      win.location.replace(TARGET_URL);
+      // 2. Cloak the new tab to look like Google Docs
+      win.document.title = "Google Docs";
+      let favicon = win.document.createElement("link");
+      favicon.rel = "icon";
+      favicon.href = "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico";
+      win.document.head.appendChild(favicon);
 
-      // 3. Redirect the original gateway tab away so it hides
+      // 3. Remove all margins and scrollbars from the blank page
+      win.document.body.style.margin = "0";
+      win.document.body.style.padding = "0";
+      win.document.body.style.overflow = "hidden";
+      win.document.body.style.height = "100vh";
+      win.document.body.style.width = "100vw";
+
+      // 4. Create and inject the fullscreen iframe pointing to your PROXY link
+      let iframe = win.document.createElement('iframe');
+      iframe.style.border = "none";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.margin = "0";
+      iframe.src = TARGET_URL;
+      
+      win.document.body.appendChild(iframe);
+
+      // 5. Hide the original gateway tab so no trace is left
       window.location.replace("https://classroom.google.com");
     }
   </script>
